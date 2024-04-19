@@ -8,7 +8,7 @@
 
 plugins {
     // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
-    id 'org.jetbrains.kotlin.jvm' version "1.8.10"
+    id 'org.jetbrains.kotlin.jvm' version "1.9.20"
 
     // Apply the application plugin to add support for building a CLI application in Java.
     id 'application'
@@ -17,7 +17,7 @@ plugins {
 }
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(19))
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 }
 
 repositories {
@@ -25,7 +25,7 @@ repositories {
     mavenCentral()
 }
 
-def KOTLIN_VERSION = "1.8.10"
+def KOTLIN_VERSION = "1.9.20"
 
 dependencies {
     // Align versions of all Kotlin components
@@ -89,7 +89,7 @@ jacocoTestReport {
 }
 
 jacoco {
-    toolVersion = "0.8.8"
+    toolVersion = "0.8.11"
     reportsDirectory.set(layout.buildDirectory.dir('reports'))
 }
 
