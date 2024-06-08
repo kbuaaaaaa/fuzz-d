@@ -108,6 +108,23 @@ class Interpret : Subcommand("interpret", "Interpret a valid .dfy file") {
 }
 
 @OptIn(ExperimentalCli::class)
+class Validate : Subcommand("validate", "Interpret and validate a .dfy file") {
+    private val file by argument(ArgType.String, "file", "path to .dfy file to validate")
+
+    override fun execute() {
+        val file = File(file)
+        val logger = Logger(file.absoluteFile.parentFile, fileName = "fuzz-d.log")
+        try {
+            ValidatorRunner(file.absoluteFile.parentFile, logger).run(file, false)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
+            logger.close()
+        }
+    }
+}
+
+@OptIn(ExperimentalCli::class)
 class VerifierFuzz : Subcommand("verifuzz", "Run fuzzing over the Dafny verifier") {
     private val seed by option(ArgType.String, "seed", "s", "Generation Seed")
 
@@ -152,7 +169,8 @@ fun createArgParser(): ArgParser {
     val recondition = Recondition()
     val interpret = Interpret()
     val verifuzz = VerifierFuzz()
-    parser.subcommands(fuzz, recondition, interpret, verifuzz)
+    val validate = Validate()
+    parser.subcommands(fuzz, recondition, interpret, verifuzz, validate)
 
     return parser
 }
