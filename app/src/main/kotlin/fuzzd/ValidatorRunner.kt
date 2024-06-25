@@ -11,18 +11,25 @@ import fuzzd.recondition.visitor.DafnyVisitor
 import org.antlr.v4.runtime.CharStreams
 import java.io.File
 
-class ValidatorRunner(private val dir: File, private val logger: fuzzd.logging.Logger) {
+class ValidatorRunner(private val dir: File, private val logger: fuzzd.logging.Logger, private val interpet: Boolean) {
     private val validator = OutputValidator()
     private val interpreterRunner = InterpreterRunner(dir, logger)
 
     fun run(file: File, verify: Boolean) {
-        logger.log { "Lexing & Parsing ${file.name}" }
-        val input = file.inputStream()
-        val cs = CharStreams.fromStream(input)
-        val tokens = org.antlr.v4.runtime.CommonTokenStream(dafnyLexer(cs))
-        val ast = DafnyVisitor().visitProgram(dafnyParser(tokens).program())
+        if (interpret) {
+            logger.log { "Lexing & Parsing ${file.name}" }
+            val input = file.inputStream()
+            val cs = CharStreams.fromStream(input)
+            val tokens = org.antlr.v4.runtime.CommonTokenStream(dafnyLexer(cs))
+            val ast = DafnyVisitor().visitProgram(dafnyParser(tokens).program())
 
-        return run(ast, verify)
+            return run(ast, verify)
+        } else {
+            return {
+                val validationResult = validator.validateFile(dir, "main", null, verify)
+                logger.log { validationResult }
+            }
+        }
     }
 
     fun run(ast: DafnyAST, verify: Boolean) {
