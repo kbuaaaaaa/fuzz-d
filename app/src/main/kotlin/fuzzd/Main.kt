@@ -41,7 +41,7 @@ class Fuzz : Subcommand("fuzz", "Generate programs to test Dafny") {
             file.mkdir()
             file
         } else {
-            val path = "output"
+            val path = "fuzz_output"
             File(path).mkdir()
             val dir = UUID.randomUUID().toString()
             File("$path/$dir")
