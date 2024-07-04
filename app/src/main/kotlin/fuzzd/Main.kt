@@ -41,7 +41,7 @@ class Fuzz : Subcommand("fuzz", "Generate programs to test Dafny") {
             file.mkdir()
             file
         } else {
-            val path = "data"
+            val path = "output"
             File(path).mkdir()
             val dir = UUID.randomUUID().toString()
             File("$path/$dir")
@@ -111,7 +111,6 @@ class Interpret : Subcommand("interpret", "Interpret a valid .dfy file") {
 class Validate : Subcommand("validate", "Interpret and validate a .dfy file") {
     private val file by argument(ArgType.String, "file", "path to .dfy file to validate")
     private val interpret by argument(ArgType.Boolean, "interpret", "i", "Interpret the file before validating")
-    private val outputFile by argument(ArgType.String, "output", "o", "Directory for output")
 
     override fun execute() {
         val fileDir = {
@@ -120,9 +119,9 @@ class Validate : Subcommand("validate", "Interpret and validate a .dfy file") {
             dir
         }()
         val file = File(file)
-        val logger = Logger(fileDir, fileName = "fuzz-d.log")
+        val logger = Logger(file.absoluteFile.parentFile, fileName = "fuzz-d.log")
         try {
-            ValidatorRunner(fileDir, logger, interpret == true).run(file, false)
+            ValidatorRunner(file.absoluteFile.parentFile, logger, interpret == true).run(file, false)
         } catch (e: Exception) {
             e.printStackTrace()
         } finally {
