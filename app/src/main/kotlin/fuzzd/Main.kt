@@ -110,14 +110,9 @@ class Interpret : Subcommand("interpret", "Interpret a valid .dfy file") {
 @OptIn(ExperimentalCli::class)
 class Validate : Subcommand("validate", "Interpret and validate a .dfy file") {
     private val file by argument(ArgType.String, "file", "path to .dfy file to validate")
-    private val interpret by argument(ArgType.Boolean, "interpret", "i", "Interpret the file before validating")
+    private val interpret by option(ArgType.Boolean, "interpret", "i", "Interpret the file before validating")
 
     override fun execute() {
-        val fileDir = {
-            val dir = File(outputFile!!)
-            dir.mkdir()
-            dir
-        }()
         val file = File(file)
         val logger = Logger(file.absoluteFile.parentFile, fileName = "fuzz-d.log")
         try {
