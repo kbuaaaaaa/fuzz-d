@@ -32,4 +32,4 @@ jobs:
         aws-region: ${{secrets.AWS_REGION}}
     - name: Upload newly build fuzz-d to S3
       run: |
-        aws s3 cp build/libs/app.jar s3://compfuzzci/base-files/jars/fuzz_d.jar
+        aws s3 cp app/build/libs/app.jar s3://compfuzzci/base-files/jars/fuzz_d.jar
