@@ -13,9 +13,18 @@ fun runCommand(command: String): Process {
 }
 
 fun compileDafny(targetLanguage: String, fileDir: String, fileName: String, timeout: Long): Process {
-    val command =
-        "timeout $timeout dafny /compileVerbose:0 /noVerify /compile:2 /spillTargetCode:1 /compileTarget:$targetLanguage $fileDir/$fileName.dfy"
-    return runCommand(command)
+    val processBuilder = ProcessBuilder(
+        "timeout",
+        timeout.toString(),
+        "dafny",
+        "/compileVerbose:0",
+        "/noVerify",
+        "/compile:2",
+        "/spillTargetCode:1",
+        "/compileTarget:$targetLanguage",
+        "$fileDir/$fileName.dfy"
+    )
+    return processBuilder.start()
 }
 
 fun verifyDafny(fileDir: String, fileName: String, timeout: Long): Process {
