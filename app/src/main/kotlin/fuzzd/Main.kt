@@ -101,6 +101,7 @@ class Interpret : Subcommand("interpret", "Interpret a valid .dfy file") {
             InterpreterRunner(file.absoluteFile.parentFile, logger).run(file, false)
         } catch (e: Exception) {
             e.printStackTrace()
+            System.exit(1)
         } finally {
             logger.close()
         }
@@ -119,6 +120,7 @@ class Validate : Subcommand("validate", "Interpret and validate a .dfy file") {
             ValidatorRunner(file.absoluteFile.parentFile, logger, interpret == true).run(file, false)
         } catch (e: Exception) {
             e.printStackTrace()
+            System.exit(1)
         } finally {
             logger.close()
         }
