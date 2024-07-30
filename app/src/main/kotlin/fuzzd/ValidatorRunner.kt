@@ -11,7 +11,7 @@ import fuzzd.recondition.visitor.DafnyVisitor
 import org.antlr.v4.runtime.CharStreams
 import java.io.File
 
-class ValidatorRunner(private val dir: File, private val logger: fuzzd.logging.Logger, private val interpret: Boolean) {
+class ValidatorRunner(private val dir: File, private val logger: fuzzd.logging.Logger, private val interpret: Boolean, private val language: String) {
     private val validator = OutputValidator()
     private val interpreterRunner = InterpreterRunner(dir, logger)
 
@@ -27,7 +27,12 @@ class ValidatorRunner(private val dir: File, private val logger: fuzzd.logging.L
         } else {
             return {
                 val validationResult = validator.validateFile(dir, "main", null, verify)
-                logger.log { validationResult }
+                if (language == ""){
+                    logger.log { validationResult }
+                }
+                else{
+                    logger.log { validationResult.prettyReport(language) }
+                }
             }()
         }
     }
@@ -39,6 +44,11 @@ class ValidatorRunner(private val dir: File, private val logger: fuzzd.logging.L
             it.printStackTrace()
         }.getOrThrow()
         val validationResult = validator.validateFile(dir, "main", output.first, verify)
-        logger.log { validationResult }
+        if (language == ""){
+            logger.log { validationResult }
+        }
+        else{
+            logger.log { validationResult.prettyReport(language) }
+        }
     }
 }

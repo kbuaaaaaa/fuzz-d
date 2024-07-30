@@ -59,4 +59,30 @@ class ValidationResult(handlers: List<ExecutionHandler>,val verificationHandler:
 
         return sb.toString()
     }
+
+    fun prettyReport(targetLanguage: String): String {
+        val sb = StringBuilder()
+
+        if (targetLanguage == "miscompilation") {
+            sb.append("Behaviour:\nThere might be a miscompilation in some language backends\n")
+            sb.append("Command:\n")
+            succeededExecute.forEach { h -> sb.append("dafny run main.dfy -t ${h.getCompileTarget()} --no-verify --allow-warnings\n")}
+            succeededExecute.forEach { h -> sb.append("${h.getCompileTarget()} output:\n${indent(h.executeResult())}\n")}
+        }
+        else {
+            failedCompile.filter { h -> h.getCompileTarget() == targetLanguage }.forEach { h ->
+                sb.append("Behaviour:\nCompilation of program failed\n")
+                sb.append("Command:\ndafny build main.dfy -t ${h.getCompileTarget()} --no-verify --allow-warnings\n")
+                sb.append("Output:\n${h.compileResult()}\n")
+            }
+
+            failedExecute.filter { h -> h.getCompileTarget() == targetLanguage }.forEach { h ->
+                sb.append("Behaviour:\nExecution of program failed\n")
+                sb.append("Command:\ndafny run main.dfy -t ${h.getCompileTarget()} --no-verify --allow-warnings\n")
+                sb.append("Output:\n${h.executeResult()}\n")
+            }
+        }
+
+        return sb.toString()
+    }
 }

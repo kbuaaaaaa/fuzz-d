@@ -1,10 +1,7 @@
 package fuzzd
 
 import fuzzd.logging.Logger
-import kotlinx.cli.ArgParser
-import kotlinx.cli.ArgType
-import kotlinx.cli.ExperimentalCli
-import kotlinx.cli.Subcommand
+import kotlinx.cli.*
 import java.io.File
 import java.util.UUID
 import kotlin.random.Random
@@ -112,12 +109,15 @@ class Interpret : Subcommand("interpret", "Interpret a valid .dfy file") {
 class Validate : Subcommand("validate", "Interpret and validate a .dfy file") {
     private val file by argument(ArgType.String, "file", "path to .dfy file to validate")
     private val interpret by option(ArgType.Boolean, "interpret", "i", "Interpret the file before validating")
+    private val language by option(ArgType.String, "language", "l", "Language to validate against").default("")
+    
 
     override fun execute() {
         val file = File(file)
         val logger = Logger(file.absoluteFile.parentFile, fileName = "fuzz-d.log")
+        
         try {
-            ValidatorRunner(file.absoluteFile.parentFile, logger, interpret == true).run(file, false)
+            ValidatorRunner(file.absoluteFile.parentFile, logger, interpret == true, language).run(file, false)
         } catch (e: Exception) {
             e.printStackTrace()
             System.exit(1)
