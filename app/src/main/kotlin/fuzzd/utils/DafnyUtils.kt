@@ -17,12 +17,12 @@ fun compileDafny(targetLanguage: String, fileDir: String, fileName: String, time
         "timeout",
         timeout.toString(),
         "dafny",
-        "build",
-        "$fileDir/$fileName.dfy",
-        "-t",
-        "$targetLanguage",
-        "--no-verify",
-        "--allow-warnings"
+        "/compileVerbose:0",
+        "/noVerify",
+        "/compile:2",
+        "/spillTargetCode:1",
+        "/compileTarget:$targetLanguage",
+        "$fileDir/$fileName.dfy"
     )
     return processBuilder.start()
 }
