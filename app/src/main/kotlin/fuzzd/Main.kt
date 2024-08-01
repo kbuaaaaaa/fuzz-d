@@ -58,6 +58,7 @@ class Fuzz : Subcommand("fuzz", "Generate programs to test Dafny") {
             )
         } catch (e: Exception) {
             e.printStackTrace()
+            System.exit(1)
         } finally {
             logger.close()
         }
