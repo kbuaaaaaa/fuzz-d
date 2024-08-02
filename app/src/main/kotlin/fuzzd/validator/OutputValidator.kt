@@ -16,17 +16,29 @@ class OutputValidator {
         mainFileName: String,
         targetOutput: String?,
         verifier: Boolean,
+        language: String,
     ): ValidationResult {
         val fileDirPath = fileDir.path
-
-        val executionHandlers = listOf(
-            CsExecutionHandler(fileDirPath, mainFileName),
-            JsExecutionHandler(fileDirPath, mainFileName),
-            PyExecutionHandler(fileDirPath, mainFileName),
-            JavaExecutionHandler(fileDirPath, mainFileName),
-            GoExecutionHandler(fileDirPath, mainFileName),
-            RustExecutionHandler(fileDirPath, mainFileName)
+        val executionHandlersMap = mapOf(
+            "cs" to CsExecutionHandler(fileDirPath, mainFileName),
+            "js" to JsExecutionHandler(fileDirPath, mainFileName),
+            "py" to PyExecutionHandler(fileDirPath, mainFileName),
+            "java" to JavaExecutionHandler(fileDirPath, mainFileName),
+            "go" to GoExecutionHandler(fileDirPath, mainFileName),
+            "rs" to RustExecutionHandler(fileDirPath, mainFileName)
         )
+        var executionHandlers = listOf(
+                CsExecutionHandler(fileDirPath, mainFileName),
+                JsExecutionHandler(fileDirPath, mainFileName),
+                PyExecutionHandler(fileDirPath, mainFileName),
+                JavaExecutionHandler(fileDirPath, mainFileName),
+                GoExecutionHandler(fileDirPath, mainFileName),
+                RustExecutionHandler(fileDirPath, mainFileName)
+            )
+        if (language != "dafny" && language != "miscompilation" && language != ""){
+            executionHandlers = listOf(executionHandlersMap[language]!!)
+        }
+        
 
         return if (verifier) {
             val verificationHandler = VerificationHandler(fileDirPath, mainFileName)

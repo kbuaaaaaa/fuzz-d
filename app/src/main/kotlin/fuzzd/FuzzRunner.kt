@@ -50,7 +50,7 @@ class FuzzRunner(private val dir: File, private val logger: Logger) {
 
             if (run) {
                 // differential testing; log results
-                val validationResult = validator.validateFile(dir, DAFNY_MAIN, output.first, verifier)
+                val validationResult = validator.validateFile(dir, DAFNY_MAIN, output.first, verifier, "")
                 logger.log { validationResult }
             }
         } catch (e: Exception) {
