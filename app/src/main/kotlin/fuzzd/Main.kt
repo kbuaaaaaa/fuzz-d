@@ -82,6 +82,7 @@ class Recondition : Subcommand("recondition", "Recondition a reduced test case")
             ReconditionRunner(file.absoluteFile.parentFile, logger).run(file, advanced == true, false)
         } catch (e: Exception) {
             e.printStackTrace()
+            System.exit(1)
         } finally {
             logger.close()
         }
@@ -160,6 +161,7 @@ class VerifierFuzz : Subcommand("verifuzz", "Run fuzzing over the Dafny verifier
             VerifierFuzzRunner(fileDir, logger).run(generationSeed, noRun != true)
         } catch (e: Exception) {
             e.printStackTrace()
+            System.exit(1)
         } finally {
             logger.close()
         }
