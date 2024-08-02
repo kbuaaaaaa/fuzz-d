@@ -26,12 +26,18 @@ import java.io.File
 
 class ReconditionRunner(private val dir: File, private val logger: Logger) {
     fun run(file: File, advanced: Boolean, verify: Boolean): Pair<String, DafnyAST> {
-        val input = file.inputStream()
-        val cs = CharStreams.fromStream(input)
-        val tokens = CommonTokenStream(dafnyLexer(cs))
+        try {
+            val input = file.inputStream()
+            val cs = CharStreams.fromStream(input)
+            val tokens = CommonTokenStream(dafnyLexer(cs))
 
-        val ast = DafnyVisitor().visitProgram(dafnyParser(tokens).program())
-        return run(ast, advanced, verify)
+            val ast = DafnyVisitor().visitProgram(dafnyParser(tokens).program())
+            return run(ast, advanced, verify)
+        } catch (e: Exception) {
+            logger.log { "An error occurred: ${e.message}" }
+            e.printStackTrace()
+            throw e
+        }
     }
 
     fun run(ast: DafnyAST, advanced: Boolean, verify: Boolean): Pair<String, DafnyAST> {

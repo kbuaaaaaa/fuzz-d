@@ -59,6 +59,7 @@ class FuzzRunner(private val dir: File, private val logger: Logger) {
             logger.log { "======================" }
             logger.log { e.stackTraceToString() }
             println(e.stackTraceToString())
+            throw e
         }
     }
 }

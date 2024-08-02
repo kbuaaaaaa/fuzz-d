@@ -42,6 +42,7 @@ class ValidatorRunner(private val dir: File, private val logger: fuzzd.logging.L
             interpreterRunner.run(ast, false, verify)
         }.onFailure {
             it.printStackTrace()
+            throw it
         }.getOrThrow()
         val validationResult = validator.validateFile(dir, "main", output.first, verify)
         if (language == ""){
