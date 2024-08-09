@@ -12,18 +12,31 @@ fun runCommand(command: String): Process {
     return Runtime.getRuntime().exec(command)
 }
 
-fun compileDafny(targetLanguage: String, fileDir: String, fileName: String, timeout: Long): Process {
-    val processBuilder = ProcessBuilder(
+fun compileDafny(targetLanguage: String, fileDir: String, fileName: String, timeout: Long, older: Boolean): Process {
+    val processBuilder = if (older) {
+        ProcessBuilder(
         "timeout",
         timeout.toString(),
         "dafny",
-        "/compileVerbose:0",
-        "/noVerify",
-        "/compile:2",
-        "/spillTargetCode:1",
-        "/compileTarget:$targetLanguage",
-        "$fileDir/$fileName.dfy"
-    )
+        "build",
+        "$fileDir/$fileName.dfy",
+        "-t",
+        "$targetLanguage",
+        "--no-verify",
+        )
+    } else {
+        ProcessBuilder(
+        "timeout",
+        timeout.toString(),
+        "dafny",
+        "build",
+        "$fileDir/$fileName.dfy",
+        "-t",
+        "$targetLanguage",
+        "--no-verify",
+        "--allow-warnings",
+        )
+    }  
     return processBuilder.start()
 }
 

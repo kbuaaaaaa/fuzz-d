@@ -5,7 +5,8 @@ class RustExecutionHandler(
     fileName: String,
     compileTimeout: Long = TIMEOUT_SECONDS,
     executeTimeout: Long = TIMEOUT_SECONDS,
-) : AbstractExecutionHandler(fileDir, fileName, compileTimeout, executeTimeout) {
+    older: Boolean,
+) : AbstractExecutionHandler(fileDir, fileName, compileTimeout, executeTimeout, older=older) {
     override fun getCompileTarget(): String = "rs"
 
     override fun getExecuteCommand(fileDir: String, fileName: String): String = "$fileDir/$fileName"

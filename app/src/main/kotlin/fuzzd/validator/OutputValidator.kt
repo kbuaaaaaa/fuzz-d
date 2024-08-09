@@ -18,22 +18,29 @@ class OutputValidator {
         verifier: Boolean,
         language: String,
     ): ValidationResult {
+        val dafnyVersionProcess = Runtime.getRuntime().exec("dafny --version")
+        val dafnyVersionOutput = dafnyVersionProcess.inputStream.bufferedReader().readText()
+        val older: Boolean = if (dafnyVersionOutput.compareTo("4.5.0") <= 0){
+            true
+        } else{
+            false
+        }
         val fileDirPath = fileDir.path
         val executionHandlersMap = mapOf(
-            "cs" to CsExecutionHandler(fileDirPath, mainFileName),
-            "js" to JsExecutionHandler(fileDirPath, mainFileName),
-            "py" to PyExecutionHandler(fileDirPath, mainFileName),
-            "java" to JavaExecutionHandler(fileDirPath, mainFileName),
-            "go" to GoExecutionHandler(fileDirPath, mainFileName),
-            "rs" to RustExecutionHandler(fileDirPath, mainFileName)
+            "cs" to CsExecutionHandler(fileDirPath, mainFileName, older=older),
+            "js" to JsExecutionHandler(fileDirPath, mainFileName, older=older),
+            "py" to PyExecutionHandler(fileDirPath, mainFileName, older=older),
+            "java" to JavaExecutionHandler(fileDirPath, mainFileName, older=older),
+            "go" to GoExecutionHandler(fileDirPath, mainFileName, older=older),
+            "rs" to RustExecutionHandler(fileDirPath, mainFileName, older=older)
         )
         var executionHandlers = listOf(
-                CsExecutionHandler(fileDirPath, mainFileName),
-                JsExecutionHandler(fileDirPath, mainFileName),
-                PyExecutionHandler(fileDirPath, mainFileName),
-                JavaExecutionHandler(fileDirPath, mainFileName),
-                GoExecutionHandler(fileDirPath, mainFileName),
-                RustExecutionHandler(fileDirPath, mainFileName)
+                CsExecutionHandler(fileDirPath, mainFileName, older=older),
+                JsExecutionHandler(fileDirPath, mainFileName, older=older),
+                PyExecutionHandler(fileDirPath, mainFileName, older=older),
+                JavaExecutionHandler(fileDirPath, mainFileName, older=older),
+                GoExecutionHandler(fileDirPath, mainFileName, older=older),
+                RustExecutionHandler(fileDirPath, mainFileName, older=older)
             )
         if (language != "dafny" && language != "miscompilation" && language != ""){
             executionHandlers = listOf(executionHandlersMap[language]!!)
