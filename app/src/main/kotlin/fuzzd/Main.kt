@@ -119,7 +119,7 @@ class Validate : Subcommand("validate", "Interpret and validate a .dfy file") {
         val logger = Logger(file.absoluteFile.parentFile, fileName = "fuzz-d.log")
         
         try {
-            ValidatorRunner(file.absoluteFile.parentFile, logger, interpret == true, language).run(file, false)
+            ValidatorRunner(file.absoluteFile.parentFile, file.name.substringBeforeLast(".dfy"),logger, interpret == true, language).run(file, false)
         } catch (e: Exception) {
             e.printStackTrace()
             System.exit(1)
