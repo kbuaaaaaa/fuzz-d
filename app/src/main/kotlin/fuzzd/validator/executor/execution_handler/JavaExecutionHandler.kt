@@ -1,6 +1,6 @@
 package fuzzd.validator.executor.execution_handler
 
-class JavaExecutionHandler(fileDir: String, fileName: String, older:Boolean) : AbstractExecutionHandler(fileDir, fileName, older=older) {
+class JavaExecutionHandler(fileDir: String, fileName: String, older: Int) : AbstractExecutionHandler(fileDir, fileName, older=older) {
     override fun getCompileTarget(): String = "java"
 
     override fun getExecuteCommand(fileDir: String, fileName: String): String =

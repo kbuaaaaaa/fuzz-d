@@ -5,7 +5,7 @@ class CsExecutionHandler(
     fileName: String,
     compileTimeout: Long = TIMEOUT_SECONDS,
     executeTimeout: Long = TIMEOUT_SECONDS,
-    older: Boolean,
+    older: Int,
 ) : AbstractExecutionHandler(fileDir, fileName, compileTimeout, executeTimeout, older=older) {
     override fun getCompileTarget(): String = "cs"
 

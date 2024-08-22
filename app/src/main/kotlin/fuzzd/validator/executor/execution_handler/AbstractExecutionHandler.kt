@@ -12,7 +12,7 @@ abstract class AbstractExecutionHandler(
     val fileName: String,
     val compileTimeout: Long = TIMEOUT_SECONDS,
     val executeTimeout: Long = TIMEOUT_SECONDS,
-    val older: Boolean,
+    val older: Int,
 ) : ExecutionHandler {
     private var compileResult: ExecutionResult = ExecutionResult()
     private var executionResult: ExecutionResult = ExecutionResult()
