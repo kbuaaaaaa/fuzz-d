@@ -33,8 +33,13 @@ class OutputValidator {
         verifier: Boolean,
         language: String,
     ): ValidationResult {
-        val dafnyVersionProcess = Runtime.getRuntime().exec("dafny --version")
-        val dafnyVersionOutput = dafnyVersionProcess.inputStream.bufferedReader().readText()
+        var dafnyVersionProcess = Runtime.getRuntime().exec("dafny --version")
+        var dafnyVersionOutput = dafnyVersionProcess.inputStream.bufferedReader().readText()
+        if (dafnyVersionOutput.isEmpty()) {
+            dafnyVersionProcess = Runtime.getRuntime().exec("dafny /version")
+            dafnyVersionOutput = dafnyVersionProcess.inputStream.bufferedReader().readText()
+        }
+        dafnyVersionOutput = dafnyVersionOutput.replace("Dafny ", "")
         val older: Int = if (compareVersions(dafnyVersionOutput, "4.5.0") < 0){
             if (compareVersions(dafnyVersionOutput, "3.10.0") < 0){
                 2
@@ -45,20 +50,44 @@ class OutputValidator {
             0
         }
         val fileDirPath = fileDir.path
-        val executionHandlersMap = mapOf(
-            "cs" to CsExecutionHandler(fileDirPath, mainFileName, older=older),
-            "js" to JsExecutionHandler(fileDirPath, mainFileName, older=older),
-            "py" to PyExecutionHandler(fileDirPath, mainFileName, older=older),
-            "java" to JavaExecutionHandler(fileDirPath, mainFileName, older=older),
-            "go" to GoExecutionHandler(fileDirPath, mainFileName, older=older)
-        )
-        var executionHandlers = listOf(
+        val executionHandlersMap = if (compareVersions(dafnyVersionOutput, "4.7.0") >= 0){
+            mapOf(
+                "rs" to RustExecutionHandler(fileDirPath, mainFileName, older=older),
+                "cs" to CsExecutionHandler(fileDirPath, mainFileName, older=older),
+                "js" to JsExecutionHandler(fileDirPath, mainFileName, older=older),
+                "py" to PyExecutionHandler(fileDirPath, mainFileName, older=older),
+                "java" to JavaExecutionHandler(fileDirPath, mainFileName, older=older),
+                "go" to GoExecutionHandler(fileDirPath, mainFileName, older=older)
+            )
+        } else{
+            mapOf(
+                "cs" to CsExecutionHandler(fileDirPath, mainFileName, older=older),
+                "js" to JsExecutionHandler(fileDirPath, mainFileName, older=older),
+                "py" to PyExecutionHandler(fileDirPath, mainFileName, older=older),
+                "java" to JavaExecutionHandler(fileDirPath, mainFileName, older=older),
+                "go" to GoExecutionHandler(fileDirPath, mainFileName, older=older)
+            )
+        }
+
+        var executionHandlers = if (compareVersions(dafnyVersionOutput, "4.7.0") >= 0){
+            listOf(
+                RustExecutionHandler(fileDirPath, mainFileName, older=older),
                 CsExecutionHandler(fileDirPath, mainFileName, older=older),
                 JsExecutionHandler(fileDirPath, mainFileName, older=older),
                 PyExecutionHandler(fileDirPath, mainFileName, older=older),
                 JavaExecutionHandler(fileDirPath, mainFileName, older=older),
                 GoExecutionHandler(fileDirPath, mainFileName, older=older)
             )
+        } else{
+            listOf(
+                CsExecutionHandler(fileDirPath, mainFileName, older=older),
+                JsExecutionHandler(fileDirPath, mainFileName, older=older),
+                PyExecutionHandler(fileDirPath, mainFileName, older=older),
+                JavaExecutionHandler(fileDirPath, mainFileName, older=older),
+                GoExecutionHandler(fileDirPath, mainFileName, older=older)
+            )
+        }
+
         if (language != "dafny" && language != "miscompilation" && language != ""){
             executionHandlers = listOf(executionHandlersMap[language]!!)
         }
