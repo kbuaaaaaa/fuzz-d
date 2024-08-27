@@ -33,13 +33,9 @@ class OutputValidator {
         verifier: Boolean,
         language: String,
     ): ValidationResult {
-        var dafnyVersionProcess = Runtime.getRuntime().exec("dafny --version")
+        var dafnyVersionProcess = Runtime.getRuntime().exec("dafny /version")
         var dafnyVersionOutput = dafnyVersionProcess.inputStream.bufferedReader().readText()
-        if (dafnyVersionOutput.isEmpty()) {
-            dafnyVersionProcess = Runtime.getRuntime().exec("dafny /version")
-            dafnyVersionOutput = dafnyVersionProcess.inputStream.bufferedReader().readText()
-        }
-        dafnyVersionOutput = dafnyVersionOutput.replace("Dafny ", "")
+        dafnyVersionOutput = dafnyVersionOutput.replace("dafny ", "")
         val older: Int = if (compareVersions(dafnyVersionOutput, "4.5.0") < 0){
             if (compareVersions(dafnyVersionOutput, "3.10.0") < 0){
                 2
