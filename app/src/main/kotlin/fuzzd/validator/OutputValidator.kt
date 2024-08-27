@@ -35,7 +35,7 @@ class OutputValidator {
     ): ValidationResult {
         var dafnyVersionProcess = Runtime.getRuntime().exec("dafny /version")
         var dafnyVersionOutput = dafnyVersionProcess.inputStream.bufferedReader().readText()
-        dafnyVersionOutput = dafnyVersionOutput.replace("dafny ", "")
+        dafnyVersionOutput = dafnyVersionOutput.replace(Regex("(?i)dafny "), "")
         val older: Int = if (compareVersions(dafnyVersionOutput, "4.5.0") < 0){
             if (compareVersions(dafnyVersionOutput, "3.10.0") < 0){
                 2
