@@ -5,8 +5,8 @@ class CsExecutionHandler(
     fileName: String,
     compileTimeout: Long = TIMEOUT_SECONDS,
     executeTimeout: Long = TIMEOUT_SECONDS,
-    older: Int,
-) : AbstractExecutionHandler(fileDir, fileName, compileTimeout, executeTimeout, older=older) {
+    dafnyVersion: String
+) : AbstractExecutionHandler(fileDir, fileName, compileTimeout, executeTimeout, dafnyVersion=dafnyVersion) {
     override fun getCompileTarget(): String = "cs"
 
     override fun getExecuteCommand(fileDir: String, fileName: String): String = "dotnet $fileDir/$fileName.dll"

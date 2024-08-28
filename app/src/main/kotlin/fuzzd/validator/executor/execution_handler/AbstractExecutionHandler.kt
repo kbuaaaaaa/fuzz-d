@@ -1,6 +1,7 @@
 package fuzzd.validator.executor.execution_handler
 
 import fuzzd.utils.compileDafny
+import fuzzd.utils.compareVersions
 import fuzzd.utils.readErrorStream
 import fuzzd.utils.readInputStream
 import fuzzd.utils.runCommand
@@ -12,7 +13,7 @@ abstract class AbstractExecutionHandler(
     val fileName: String,
     val compileTimeout: Long = TIMEOUT_SECONDS,
     val executeTimeout: Long = TIMEOUT_SECONDS,
-    val older: Int,
+    val dafnyVersion: String,
 ) : ExecutionHandler {
     private var compileResult: ExecutionResult = ExecutionResult()
     private var executionResult: ExecutionResult = ExecutionResult()
@@ -20,7 +21,7 @@ abstract class AbstractExecutionHandler(
     protected abstract fun getExecuteCommand(fileDir: String, fileName: String): String
 
     override fun compile(): ExecutionResult {
-        val process = compileDafny(getCompileTarget(), fileDir, fileName, compileTimeout, older)
+        val process = compileDafny(getCompileTarget(), fileDir, fileName, compileTimeout, dafnyVersion)
         val termination = process.waitFor(compileTimeout, TimeUnit.SECONDS)
 
         return ExecutionResult(
