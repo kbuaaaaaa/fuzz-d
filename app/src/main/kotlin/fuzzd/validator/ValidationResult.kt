@@ -69,6 +69,11 @@ class ValidationResult(handlers: List<ExecutionHandler>,val verificationHandler:
             succeededExecute.forEach { h -> sb.append("dafny run main.dfy -t ${h.getCompileTarget()} --no-verify --allow-warnings\n")}
             succeededExecute.forEach { h -> sb.append("${h.getCompileTarget()} output:\n${indent(h.executeResult())}\n")}
             sb.appendLine("Different output: ${differentOutput()}\n")
+
+            sb.appendLine("Failed compilation:\n")
+            failedCompile.forEach { h -> sb.append("${h.getCompileTarget()}:\n${indent(h.compileResult())} \n") }
+            sb.appendLine("Failed execution:\n")
+            failedExecute.forEach { h -> sb.append("${h.getCompileTarget()}:\n${indent(h.executeResult())}\n") }
         }
         else if (targetLanguage == "dafny") {
             failedCompile.firstOrNull()?.let { h ->
