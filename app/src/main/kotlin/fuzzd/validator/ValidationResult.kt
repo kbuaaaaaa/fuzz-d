@@ -76,18 +76,17 @@ class ValidationResult(handlers: List<ExecutionHandler>,val verificationHandler:
             failedExecute.forEach { h -> sb.append("${h.getCompileTarget()}:\n${indent(h.executeResult())}\n") }
         }
         else if (targetLanguage == "dafny") {
-            failedCompile.firstOrNull()?.let { h ->
+            failedCompile.filter { h -> h.getCompileTarget() == "js" }.forEach { h ->
                 sb.append("Behaviour:\nCompilation of program failed\n")
-                sb.append("Command:\ndafny build main.dfy -t <any language> --no-verify --allow-warnings\n")
+                sb.append("Command:\ndafny build main.dfy -t ${h.getCompileTarget()} --no-verify --allow-warnings\n")
                 sb.append("Output:\n${h.compileResult()}\n")
             }
 
-            failedExecute.firstOrNull()?.let { h ->
+            failedExecute.filter { h -> h.getCompileTarget() == "js" }.forEach { h ->
                 sb.append("Behaviour:\nExecution of program failed\n")
                 sb.append("Command:\ndafny run main.dfy -t ${h.getCompileTarget()} --no-verify --allow-warnings\n")
-                sb.append("Output:\n${indent(h.executeResult())}\n")
+                sb.append("Output:\n${h.executeResult()}\n")
             }
-
         }
         else {
             failedCompile.filter { h -> h.getCompileTarget() == targetLanguage }.forEach { h ->
