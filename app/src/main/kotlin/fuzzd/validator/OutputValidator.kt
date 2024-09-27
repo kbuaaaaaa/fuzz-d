@@ -21,7 +21,12 @@ class OutputValidator {
     ): ValidationResult {
         var dafnyVersionProcess = Runtime.getRuntime().exec("dafny /version")
         var dafnyVersionOutput = dafnyVersionProcess.inputStream.bufferedReader().readText()
-        dafnyVersionOutput = dafnyVersionOutput.replace(Regex("(?i)dafny "), "")
+        if (dafnyVersionOutput == "Dafny ") {
+            dafnyVersionOutput = "3.8.0"
+        }
+        else{
+            dafnyVersionOutput = dafnyVersionOutput.replace(Regex("(?i)dafny "), "")
+        }
         val fileDirPath = fileDir.path
         val executionHandlersMap = mapOf(
                 "rs" to RustExecutionHandler(fileDirPath, mainFileName, dafnyVersion=dafnyVersionOutput),
