@@ -22,33 +22,62 @@ abstract class AbstractExecutionHandler(
 
     override fun compile(): ExecutionResult {
         val process = compileDafny(getCompileTarget(), fileDir, fileName, compileTimeout, dafnyVersion)
-        val termination = process.waitFor(compileTimeout, TimeUnit.SECONDS)
+        try {
+            val termination = process.waitFor(compileTimeout, TimeUnit.SECONDS)
 
-        return ExecutionResult(
-            termination,
-            if (termination) process.exitValue() else TIMEOUT_RETURN_CODE,
-            process.readInputStream(),
-            process.readErrorStream(),
-        )
+            return ExecutionResult(
+                termination,
+                if (termination) process.exitValue() else TIMEOUT_RETURN_CODE,
+                process.readInputStream(),
+                process.readErrorStream(),
+            )
+        } catch (e: InterruptedException) {
+            println("Compilation interrupted")
+            Thread.currentThread().interrupt() // Preserve interrupt status
+        } finally {
+            process?.let {
+                if (it.isAlive) {
+                    println("Terminating process")
+                    it.destroy()
+                }
+            }
+        }
+
+        return ExecutionResult(false, TIMEOUT_RETURN_CODE, "", "")
     }
 
     override fun compileResult(): ExecutionResult = compileResult
 
     override fun execute(): ExecutionResult {
         val process = runCommand("timeout $executeTimeout ${getExecuteCommand(fileDir, fileName)}")
-        val termination = process.waitFor(executeTimeout, TimeUnit.SECONDS)
+        try{
+            val termination = process.waitFor(executeTimeout, TimeUnit.SECONDS)
 
-        return ExecutionResult(
-            termination,
-            if (termination) process.exitValue() else TIMEOUT_RETURN_CODE,
-            process.readInputStream(),
-            process.readErrorStream(),
-        )
+            return ExecutionResult(
+                termination,
+                if (termination) process.exitValue() else TIMEOUT_RETURN_CODE,
+                process.readInputStream(),
+                process.readErrorStream(),
+            )
+        } catch (e: InterruptedException) {
+            println("Execution interrupted")
+            Thread.currentThread().interrupt() // Preserve interrupt status
+        } finally {
+            process?.let {
+                if (it.isAlive) {
+                    println("Terminating process")
+                    it.destroy()
+                }
+            }
+        }
+
+        return ExecutionResult(false, TIMEOUT_RETURN_CODE, "", "")
     }
 
     override fun executeResult(): ExecutionResult = executionResult
 
     override fun run() {
+        
         compileResult = compile()
 
         if (compileResult.exitCode == 0) {
@@ -57,7 +86,7 @@ abstract class AbstractExecutionHandler(
     }
 
     companion object {
-        const val TIMEOUT_SECONDS = 60L
+        const val TIMEOUT_SECONDS = 300L
         const val TIMEOUT_RETURN_CODE = 2
     }
 }

@@ -10,6 +10,9 @@ import fuzzd.validator.executor.execution_handler.RustExecutionHandler
 import fuzzd.validator.executor.execution_handler.VerificationHandler
 import fuzzd.utils.compareVersions
 import java.io.File
+import sun.misc.Signal
+import sun.misc.SignalHandler
+
 
 class OutputValidator {
     fun validateFile(
@@ -71,8 +74,20 @@ class OutputValidator {
     }
 
     private fun execute(runnables: List<Runnable>) {
-        runnables.map { Thread(it) }
-            .map { t -> t.start(); t }
-            .map { t -> t.join() }
+        val threads = runnables.map { Thread(it) }
+
+        // Signal handler for SIGTERM
+        Signal.handle(Signal("TERM"), SignalHandler {
+            println("Received SIGTERM, terminating threads")
+            threads.forEach { 
+                if (it.isAlive) {
+                    it.interrupt()
+                }
+            }
+        })
+
+        threads.forEach { it.start() }
+        threads.forEach { it.join() }
+
     }
 }
